@@ -1,0 +1,1 @@
+#include "wtlog/LogManager.hpp"

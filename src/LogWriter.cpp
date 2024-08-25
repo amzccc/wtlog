@@ -1,0 +1,2 @@
+#include "wtlog/LogWriter.hpp"
+
