@@ -2,26 +2,18 @@ cmake_minimum_required(VERSION 3.20)
 
 project(wtlog LANGUAGES CXX)
 
-add_library(Log_Object OBJECT)
+add_library(WtLog INTERFACE)
 
-target_compile_features(Log_Object PUBLIC cxx_std_20)
+target_compile_features(WtLog INTERFACE cxx_std_20)
 
-target_include_directories(Log_Object PUBLIC
+target_include_directories(WtLog INTERFACE
     $<BUILD_INTERFACE: ${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
-add_subdirectory(src)
+set_target_properties(WtLog PROPERTIES OUTPUT_NAME "wtlog")
 
-set_target_properties(Log_Object PROPERTIES 
-    POSITION_INDEPENDENT_CODE 1
-)
-
-add_library(wtlog_static STATIC $<TARGET_OBJECTS:Log_Object>)
-
-add_library(wtlog SHARED $<TARGET_OBJECTS:Log_Object>)
-
-install(TARGETS wtlog_static wtlog 
+install(TARGETS WtLog
     EXPORT wtlogConfig
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
@@ -37,3 +29,15 @@ install(EXPORT wtlogConfig
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/include
     DESTINATION include
 )
+
+option(WTLOG_TEST_FLAG "ctest flag" OFF)
+if(WTLOG_TEST_FLAG)
+    add_subdirectory(test)
+endif()
+
+option(WTLOG_EXAMPLE_FLAG "install example demo" ON)
+if(WTLOG_EXAMPLE_FLAG)
+    install(DIRECTORY example 
+        DESTINATION example
+    )
+endif()

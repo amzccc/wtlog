@@ -8,8 +8,15 @@
 #ifndef LOGSCHEDULER_HPP__
 #define LOGSCHEDULER_HPP__
 
+namespace wtlog {
+namespace scheduler {
 class LogScheduler {
-    
+
 };
+
+}   // !namespace scheduler
+}   // !namespace wtlog
+
+
 
 #endif //!LogScheduler.hpp

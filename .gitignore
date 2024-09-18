@@ -33,5 +33,5 @@
 
 *.vs
 *.vscode
-out
-build
+/out
+/build
