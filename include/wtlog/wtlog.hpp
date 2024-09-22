@@ -9,11 +9,17 @@
 #define LOGGERPLUSPLUS_HPP__
 
 #include "impl/LogImpl.hpp"
-#include <memory>
 
 
 namespace wtlog {
 
+class Logger {
+public:
+    
+
+private:
+    impl::LogImpl m_impl;
+};
 
 }   // !namespace wtlog
 

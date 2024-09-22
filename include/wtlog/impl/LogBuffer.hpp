@@ -8,40 +8,66 @@
 #ifndef LOGBUFFER_H__
 #define LOGBUFFER_H__
 
-#include "LogDef.hpp"
 #include <string_view>
 #include <cstring>
+#include <atomic>
+#include "LogDef.hpp"
 
 namespace wtlog {
 namespace buffer {
-class LogBuffer {
+
+enum class BuffStat : char {
+	idle,
+	writable,
+	writing,
+	readable,
+	reading,
+};
+
+class Buffer {
 public:
-	explicit LogBuffer(const std::size_t capacity)
+	explicit Buffer(const std::size_t capacity)
 		: m_buff(new char[capacity] { }),
-		m_cur(0), m_tail(0), m_capacity(capacity - 1) { }
+		m_capacity(capacity - 1) { }
 
-	LogBuffer(const LogBuffer&) = delete;
-
-	LogBuffer(LogBuffer&& buff) noexcept {
-		this->m_buff = std::move(buff.m_buff);
-		buff.m_buff = nullptr;
-		this->m_cur = std::move(buff.m_cur);
-		this->m_tail = std::move(buff.m_tail);
-		this->m_capacity = std::move(buff.m_capacity);
+	Buffer(const Buffer& logbuff)
+		: m_buff(new char[logbuff.m_capacity + 1] { }),
+		m_cur(logbuff.m_cur), 
+		m_tail(logbuff.m_tail),
+		m_capacity(logbuff.m_capacity) {
+		m_stat.store(logbuff.m_stat);
+		std::memcpy(m_buff, logbuff.m_buff, logbuff.m_capacity);
 	}
 
-	LogBuffer& operator=(const LogBuffer&) = delete;
+	Buffer(Buffer&& logbuff) noexcept
+		: m_buff(std::move(logbuff.m_buff)),
+		m_cur(std::move(logbuff.m_cur)),
+		m_tail(std::move(logbuff.m_tail)),
+		m_capacity(std::move(logbuff.m_capacity)) {
+		logbuff.m_buff = nullptr;
+		this->m_stat.store(logbuff.m_stat);
+	}
 
-	LogBuffer& operator=(LogBuffer&& buff) noexcept {
-		this->m_buff = std::move(buff.m_buff);
-		buff.m_buff = nullptr;
-		this->m_cur = std::move(buff.m_cur);
-		this->m_tail = std::move(buff.m_tail);
-		this->m_capacity = std::move(buff.m_capacity);
+	Buffer& operator=(const Buffer& logbuff) {
+		m_cur = logbuff.m_cur;
+		m_tail = logbuff.m_tail;
+		m_capacity = logbuff.m_capacity;
+		delete[] m_buff;
+		m_buff = new char[m_capacity + 1] { };
+		std::memcpy(m_buff, logbuff.m_buff, logbuff.m_capacity);
+	}
+
+	Buffer& operator=(Buffer&& logbuff) noexcept {
+		this->m_buff = std::move(logbuff.m_buff);
+		logbuff.m_buff = nullptr;
+		this->m_cur = std::move(logbuff.m_cur);
+		this->m_tail = std::move(logbuff.m_tail);
+		this->m_capacity = std::move(logbuff.m_capacity);
+		this->m_stat.store(logbuff.m_stat);
 		return *this;
 	}
 
-	~LogBuffer() {
+	~Buffer() {
 		delete m_buff;
 	}
 
@@ -75,16 +101,34 @@ public:
 	 * @brief 清空buffer
 	 */
 	void clear() {
-		std::memset(m_buff, 0, m_capacity);
 		m_cur = 0;
 		m_tail = 0;
+		m_stat = BuffStat::idle;
+	}
+
+	std::size_t length() const {
+		return m_tail - m_cur;
+	}
+
+	bool empty() const {
+		return m_cur == m_tail;
+	}
+
+	BuffStat state() const {
+		return m_stat.load();
+	}
+
+	void setStat(BuffStat stat) {
+		m_stat.store(stat);
 	}
 
 private:
-	char* m_buff{ nullptr };	// 缓存的原始字符数组
-	std::size_t m_cur{};		// 当前缓存的位置
-	std::size_t m_tail{};		// 当前缓存使用的数量
-	std::size_t m_capacity{};	// 缓存的容量
+	char* m_buff{ nullptr };			// 缓存的原始字符数组
+	std::size_t m_cur{};				// 当前缓存的位置
+	std::size_t m_tail{};				// 当前缓存使用的数量
+	std::size_t m_capacity{};			// 缓存的容量
+
+	std::atomic<BuffStat> m_stat{ BuffStat::idle };	// 当前buff的状态
 };
 
 }	// !namespace buffer

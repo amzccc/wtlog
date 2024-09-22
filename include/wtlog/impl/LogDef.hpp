@@ -12,7 +12,6 @@
 
 
 namespace wtlog {
-namespace common {
 /**
  * @brief 日志等级
  */
@@ -51,7 +50,6 @@ enum class TimeUnit : char {
     millsecond,
 };
 
-}   // !namespace common
 }   // !namespace wtlog
 
 #endif //!LogDef.hpp

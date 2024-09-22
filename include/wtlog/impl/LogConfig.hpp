@@ -1,38 +1,37 @@
+/*********************************************************************************
+ * @file		LogConfig.hpp
+ * @brief		
+ * @author		cwt
+ * @version		v0.0.0
+ * @date		2024-09-22 09:48
+ **********************************************************************************/
+#ifndef LOGCONFIG_H__
+#define LOGCONFIG_H__
 
-#include "LogDef.hpp"
 #include <chrono>
 #include <string_view>
 #include <filesystem>
 #include <bitset>
+#include "LogDef.hpp"
 
 namespace wtlog {
 namespace config {
-using namespace common;
-class LogConfig {
+class Configer {
 protected:
-    LogConfig() = default;
+    Configer(const Configer&) = delete;
 
-    LogConfig(const LogConfig&) = delete;
+    Configer& operator=(const Configer&) = delete;
 
-    LogConfig& operator=(const LogConfig&) = delete;
+    Configer(Configer&&) = delete;
 
-    LogConfig(LogConfig&&) = delete;
-
-    LogConfig& operator=(LogConfig&&) = delete;
+    Configer& operator=(Configer&&) = delete;
 
 public:
-    ~LogConfig() = default;
+    Configer() = default;
+
+    virtual ~Configer() = default;
 
 public:
-    /**
-     * @brief 日志配置是个全局单例类，通过instance获取单例的引用。
-     * @return
-     */
-    LogConfig& instance() {
-        static LogConfig config;
-        return config;
-    }
-
     /**
      * @brief 设置日志文件的路径，日志将会存放在@path文件夹下
      * @param path 指定日志存放路径
@@ -46,6 +45,10 @@ public:
         }
         m_dir = path;
         return Status::success;
+    }
+
+    std::filesystem::path logDir() const {
+        return m_dir;
     }
 
     /**
@@ -83,7 +86,7 @@ public:
         }
     }
 
-    bool logValid(Level level) const {
+    bool isValid(Level level) const {
         switch(level) {
         case Level::fatal:
             return m_levels.test(1);
@@ -117,6 +120,10 @@ public:
         }
     }
 
+    std::size_t filesize() const {
+        return m_filesize;
+    }
+
     /**
      * @brief 设置单个缓存块的最大容量
      * @param bytes 指定缓存块的容量，单位是字节
@@ -125,12 +132,20 @@ public:
         m_buffcapacity = bytes;
     }
 
+    std::size_t buffcapacity() const {
+        return m_buffcapacity;
+    }
+
     /**
      * @brief 设置缓存块的最大数量，0表示关闭缓存，日志直接输入到日志文件中
      * @param quantity
      */
     void setBuffQuantity(std::size_t quantity) {
         m_buffcount = quantity;
+    }
+
+    std::size_t buffquantity() const {
+        return m_buffcount;
     }
 
     /**
@@ -168,6 +183,10 @@ public:
         }
     }
 
+    std::chrono::minutes period() const {
+        return m_period;
+    }
+
 private:
     std::filesystem::path m_dir{ std::filesystem::current_path() /= "log" };  // 日志输出路径
     std::bitset<8> m_levels{ 2 };                     // 日志输出等级 0:none; 1:fatal; 2:error; 3:warning; 4:info; 5:trace; 6:debug
@@ -179,3 +198,5 @@ private:
 
 }   // !namespace config
 }   // !namespace wtlog
+
+#endif // !LogConfig.hpp

@@ -10,8 +10,8 @@
 
 namespace wtlog {
 namespace scheduler {
-class LogScheduler {
-
+class Scheduler {
+    
 };
 
 }   // !namespace scheduler
