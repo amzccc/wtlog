@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.20.0)
 
-add_executable(UnitTest test.cpp)
+add_executable(unittest test.cpp)
 
-target_link_libraries(UnitTest PRIVATE WtLog)
+target_link_libraries(unittest PRIVATE 
+	wtlog_static
+)
+
+target_include_directories(unittest PRIVATE
+	$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+	$<INSTALL_INTERFACE:include>
+)
 
 enable_testing()
 
@@ -13,5 +20,6 @@ function(do_test Target Arg Result)
 	)
 endfunction()
 
+do_test(unittest "*", "pass")
 
 
