@@ -3,7 +3,7 @@
 #include <map>
 
 using namespace wtlog;
-using wtlog::LogManager;
+using wtlog::LogGenerator;
 
 std::map<LogLevel, std::string> Logger::m_logflags{
     { LogLevel::fatal, " [F] " },
@@ -15,21 +15,23 @@ std::map<LogLevel, std::string> Logger::m_logflags{
 };
 
 wtlog::Logger::~Logger() {
-    send2Backend();
+    if(!m_carrier->empty()) {
+        m_splitter->distribute(m_carrier, m_sinknos);
+    }
 }
 
-LogManager& wtlog::LogManager::instance() {
-    static LogManager factory;
+LogGenerator& wtlog::LogGenerator::instance() {
+    static LogGenerator factory;
     return factory;
 }
 
 void wtlog::Logger::attachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = sinks::SinkSplitter::instance().registerSink(sinker);
+    auto sink_no = m_splitter->registerSink(sinker);
     m_sinknos.push_back(sink_no);
 }
 
 void wtlog::Logger::detachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = sinks::SinkSplitter::instance().unregisterSink(sinker);
+    auto sink_no = m_splitter->unregisterSink(sinker);
     auto iter = std::remove(m_sinknos.begin(), m_sinknos.end(), sink_no);
     m_sinknos.erase(iter, m_sinknos.end());
 }
@@ -65,10 +67,8 @@ void wtlog::Logger::log(std::string_view raw_msg) {
 }
 
 void wtlog::Logger::send2Backend() {
-    if(m_carrier != nullptr) {
-        auto carrier = m_carrier->transfer();
-        sinks::SinkSplitter::instance().distribute(carrier, m_sinknos);
-    }
+    auto carrier = m_carrier->transfer();
+    m_splitter->distribute(carrier, m_sinknos);
 }
 
 std::string wtlog::Logger::enrich(std::string_view raw_msg) {

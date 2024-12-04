@@ -12,9 +12,9 @@ static ui64_t seq() {
 
 } // !namespace
 
-wtlog::sinks::SinkSplitter& wtlog::sinks::SinkSplitter::instance() {
-    static SinkSplitter instance;
-    return instance;
+Pointer<sinks::SinkSplitter> wtlog::sinks::SinkSplitter::instance() {
+    static Pointer<SinkSplitter> m_instance(new SinkSplitter);
+    return m_instance;
 }
 
 ui64_t wtlog::sinks::SinkSplitter::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {

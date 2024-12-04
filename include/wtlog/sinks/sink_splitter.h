@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 namespace wtlog {
 namespace sinks {
 
@@ -32,7 +33,7 @@ public:
      * @brief 获取消息分流器的实例
      * @return 
      */
-    static SinkSplitter& instance();
+    static Pointer<SinkSplitter> instance();
 
     /**
      * @brief 向分流器中注册一个日志接收端。
@@ -56,7 +57,7 @@ public:
     void distribute(Pointer<details::Carrier> carrier, const std::vector<ui64_t>& sinks_no);
 
 private:
-    inline static std::unordered_map<ui64_t, Pointer<Sinker>> m_sinks{};
+    std::unordered_map<ui64_t, Pointer<Sinker>> m_sinks{};
 };
 
 } // !namespace sinks

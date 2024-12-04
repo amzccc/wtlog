@@ -25,11 +25,12 @@ public:
         ready
     };
 
+public:
     virtual ~Carrier() = default;
 
 public:
     /**
-     * @brief 返回日志传输对象的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
+     * @brief 返回日志运载器的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
      * @return 
      */
     virtual Status state() const = 0;
@@ -48,13 +49,13 @@ public:
     virtual ui64_t store(std::string_view msg) = 0;
 
     /**
-     * @brief 将日志移交给一个新生成的对象，并将其返回出去，当前对象会失去日志内容的所有权并初始化内部状态。
-     * @return 新生成的记录了日志信息的传输对象
+     * @brief 将日志移交给一个新生成的运载器，并将其返回出去，当前运载器会失去日志内容的所有权并初始化内部状态。
+     * @return 新生成的记录了日志信息的运载器
      */
     virtual Pointer<Carrier> transfer() = 0;
 
     /**
-     * @brief 日志传输对象是否为空
+     * @brief 日志运载器是否为空
      * @return 
      */
     virtual bool empty() = 0;
@@ -94,19 +95,19 @@ public:
     ui64_t store(std::string_view msg) override;
 
     /**
-     * @brief 返回日志传输对象的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
+     * @brief 返回日志运载器的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
      * @return 
      */
     Status state() const override;
 
     /**
-     * @brief 将日志移交给一个新生成的对象，并将其返回出去，当前对象会失去日志内容的所有权并初始化内部状态。
-     * @return 新生成的记录了日志信息的传输对象
+     * @brief 将日志移交给一个新生成的运载器，并将其返回出去，当前运载器会失去日志内容的所有权并初始化内部状态。
+     * @return 新生成的记录了日志信息的运载器
      */
     Pointer<Carrier> transfer() override;
 
     /**
-     * @brief 日志传输对象是否为空
+     * @brief 日志运载器是否为空
      * @return 
      */
     bool empty() override;
@@ -147,19 +148,19 @@ public:
     ui64_t store(std::string_view msg) override;
 
     /**
-     * @brief 返回日志传输对象的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
+     * @brief 返回日志运载器的状态，返回`Carrier::Staus::ready`表明当前的传输对象已经准备好传输了
      * @return 
      */
     Status state() const override;
 
     /**
-     * @brief 将日志移交给一个新生成的对象，并将其返回出去，当前对象会失去日志内容的所有权并初始化内部状态。
-     * @return 新生成的记录了日志信息的传输对象
+     * @brief 将日志移交给一个新生成的运载器，并将其返回出去，当前运载器会失去日志内容的所有权并初始化内部状态。
+     * @return 新生成的记录了日志信息的运载器
      */
     Pointer<Carrier> transfer() override;
 
     /**
-     * @brief 日志传输对象是否为空
+     * @brief 日志运载器是否为空
      * @return 
      */
     bool empty() override;
@@ -172,9 +173,8 @@ public:
     void resizeBuffer(ui64_t size);
 
     /**
-     * @brief 交换两个传输对象
-     * @param lval 
-     * @param rval 
+     * @brief 交换两个日志运载器
+     * @param other  另一个运载器的引用
      */
     void swap(BuffCarrier& other);
 

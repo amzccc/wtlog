@@ -75,41 +75,42 @@ protected:
     /**
      * @brief 将日志发送给后端处理
      */
-    virtual void send2Backend();
+    void send2Backend();
 
     /**
      * @brief 扩展日志，添加日志打印时间和日志等级标识
      * @param raw_msg 日志消息
      * @return 经过扩展加工后的日志
      */
-    virtual std::string enrich(std::string_view raw_msg);
+    std::string enrich(std::string_view raw_msg);
 
 protected:
     LogLevel m_level{ LogLevel::error };
     std::vector<ui64_t> m_sinknos{};
     wtlog::utils::Clock m_clock{};
     Pointer<details::Carrier> m_carrier{ std::make_shared<details::SimpleCarrier>() };
+    Pointer<sinks::SinkSplitter> m_splitter{ sinks::SinkSplitter::instance() };
     static std::map<LogLevel, std::string> m_logflags;
 };
 
 
-/*-------------------------log manager------------------------------*/
-class LogManager {
+/*-------------------------log generator------------------------------*/
+class LogGenerator {
 private:
-    LogManager() = default;
+    LogGenerator() = default;
 
-    LogManager(const LogManager&) = delete;
+    LogGenerator(const LogGenerator&) = delete;
 
-    LogManager(LogManager&&) noexcept = delete;
+    LogGenerator(LogGenerator&&) noexcept = delete;
 
-    ~LogManager() = default;
+    ~LogGenerator() = default;
     
 public:
     /**
      * @brief 返回日志工厂的实例
      * @return 
      */
-    static LogManager& instance();
+    static LogGenerator& instance();
 
     /**
      * @brief 构造一个日志对象
@@ -154,7 +155,7 @@ private:
  */
 template<typename... Args>
 void trace(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::trace, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::trace, fmt, std::forward<Args>(args)...);
 }
 
 /**
@@ -165,7 +166,7 @@ void trace(const std::string& fmt, Args&&... args) {
  */
 template<typename... Args>
 void debug(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::debug, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::debug, fmt, std::forward<Args>(args)...);
 }
 
 /**
@@ -176,7 +177,7 @@ void debug(const std::string& fmt, Args&&... args) {
  */
 template<typename... Args>
 void info(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::info, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::info, fmt, std::forward<Args>(args)...);
 }
 
 /**
@@ -187,7 +188,7 @@ void info(const std::string& fmt, Args&&... args) {
  */
 template<typename... Args>
 void warn(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::warn, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::warn, fmt, std::forward<Args>(args)...);
 }
 
 /**
@@ -198,7 +199,7 @@ void warn(const std::string& fmt, Args&&... args) {
  */
 template<typename... Args>
 void error(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::error, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::error, fmt, std::forward<Args>(args)...);
 }
 
 /**
@@ -209,12 +210,12 @@ void error(const std::string& fmt, Args&&... args) {
  */
 template<typename... Args>
 void fatal(const std::string& fmt, Args&&... args) {
-    LogManager::instance().log(LogLevel::fatal, fmt, std::forward<Args>(args)...);
+    LogGenerator::instance().log(LogLevel::fatal, fmt, std::forward<Args>(args)...);
 }
 
 template<typename Log, typename... Args>
 Pointer<Logger> logCreate(Args&&... args) {
-    return LogManager::instance().create<Log>(std::forward<Args>(args)...);
+    return LogGenerator::instance().create<Log>(std::forward<Args>(args)...);
 }
 
 } // !namespace wtlog
