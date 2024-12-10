@@ -1,5 +1,5 @@
 #include "wtlog/logger.h"
-#include "wtlog/sinks/sink_splitter.h"
+#include "wtlog/sinks/sink_distributor.h"
 #include <map>
 
 using namespace wtlog;

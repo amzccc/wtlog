@@ -9,7 +9,7 @@
 #define LOGGER_H__
 
 #include "details/log_carrier.h"
-#include "sinks/sink_splitter.h"
+#include "sinks/sink_distributor.h"
 #include "details/log_clock.h"
 #include <string>
 #include <vector>

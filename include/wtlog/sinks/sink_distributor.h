@@ -1,12 +1,12 @@
 /*********************************************************************************
- * @file		sink_splitter.h
+ * @file		sink_distributor.h
  * @brief		
  * @author		cwt
  * @version		v0.0.0
  * @date		2024-11-20 15:34
  **********************************************************************************/
-#ifndef SINK_SPLITTER_H__
-#define SINK_SPLITTER_H__
+#ifndef SINK_DISTRIBUTOR_H__
+#define SINK_DISTRIBUTOR_H__
 
 #include "wtlog/details/log_typedef.h"
 #include "sinker.h"
@@ -63,4 +63,4 @@ private:
 } // !namespace sinks
 } // !namespace wtlog
 
-#endif // !SINK_SPLITTER_H__
+#endif // !SINK_DISTRIBUTOR_H__
