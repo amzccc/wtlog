@@ -17,23 +17,23 @@
 namespace wtlog {
 namespace sinks {
 
-class SinkSplitter {
+class SinkDistributor {
 protected:
-    SinkSplitter() = default;
+    SinkDistributor() = default;
 
-    SinkSplitter(const SinkSplitter&) = delete;
+    SinkDistributor(const SinkDistributor&) = delete;
 
-    SinkSplitter(SinkSplitter&&) = delete;
+    SinkDistributor(SinkDistributor&&) = delete;
 
 public:
-    ~SinkSplitter() = default;
+    ~SinkDistributor() = default;
 
 public:
     /**
      * @brief 获取消息分流器的实例
      * @return 
      */
-    static Pointer<SinkSplitter> instance();
+    static Pointer<SinkDistributor> instance();
 
     /**
      * @brief 向分流器中注册一个日志接收端。

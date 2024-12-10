@@ -12,18 +12,18 @@ static ui64_t seq() {
 
 } // !namespace
 
-Pointer<sinks::SinkSplitter> wtlog::sinks::SinkSplitter::instance() {
-    static Pointer<SinkSplitter> m_instance(new SinkSplitter);
+Pointer<sinks::SinkDistributor> wtlog::sinks::SinkDistributor::instance() {
+    static Pointer<SinkDistributor> m_instance(new SinkDistributor);
     return m_instance;
 }
 
-ui64_t wtlog::sinks::SinkSplitter::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {
+ui64_t wtlog::sinks::SinkDistributor::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {
     auto key = seq();
     m_sinks.insert(std::make_pair(key, sinker));
     return key;
 }
 
-ui64_t wtlog::sinks::SinkSplitter::unregisterSink(wtlog::Pointer<sinks::Sinker> sinker) {
+ui64_t wtlog::sinks::SinkDistributor::unregisterSink(wtlog::Pointer<sinks::Sinker> sinker) {
     for(auto [seq, sk] : m_sinks) {
         if(sk == sinker) {
             m_sinks.erase(seq);
@@ -33,7 +33,7 @@ ui64_t wtlog::sinks::SinkSplitter::unregisterSink(wtlog::Pointer<sinks::Sinker> 
     return 0;
 }
 
-void wtlog::sinks::SinkSplitter::distribute(Pointer<details::Carrier> carrier, const std::vector<ui64_t>& sinks_no) {
+void wtlog::sinks::SinkDistributor::distribute(Pointer<details::Carrier> carrier, const std::vector<ui64_t>& sinks_no) {
     for(auto num : sinks_no) {
         auto iter = m_sinks.find(num);
         if(iter != m_sinks.end()) {

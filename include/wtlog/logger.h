@@ -89,7 +89,7 @@ protected:
     std::vector<ui64_t> m_sinknos{};
     wtlog::utils::Clock m_clock{};
     Pointer<details::Carrier> m_carrier{ std::make_shared<details::SimpleCarrier>() };
-    Pointer<sinks::SinkSplitter> m_splitter{ sinks::SinkSplitter::instance() };
+    Pointer<sinks::SinkDistributor> m_splitter{ sinks::SinkDistributor::instance() };
     static std::map<LogLevel, std::string> m_logflags;
 };
 
