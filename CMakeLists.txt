@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Wtlog LANGUAGES CXX)
 
+include(GNUInstallDirs)
+
 add_library(wtlog_interface INTERFACE)
 
 target_compile_features(wtlog_interface INTERFACE cxx_std_20)
@@ -13,36 +15,34 @@ target_compile_options(wtlog_interface INTERFACE
   "$<${msvc_like}:$<BUILD_INTERFACE:-W3>>"
 )
 
-add_library(wtlog_static STATIC)
+add_library(wtlog STATIC)
 
 message(STATUS "compiler id: ${CMAKE_CXX_COMPILER_ID}")
 
-target_include_directories(wtlog_static PUBLIC 
+target_include_directories(wtlog PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
 add_subdirectory(src)
 
-target_link_libraries(wtlog_static PUBLIC wtlog_interface)
+target_link_libraries(wtlog PUBLIC wtlog_interface)
 
-set_target_properties(wtlog_static PROPERTIES OUTPUT_NAME "wtlog")
-
-install(TARGETS wtlog_interface wtlog_static
+install(TARGETS wtlog_interface wtlog
     EXPORT wtlogConfig
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+install(DIRECTORY include/
+DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(EXPORT wtlogConfig
-    FILE 
+    FILE wtlogConfig.cmake
     NAMESPACE wtlog::
-    DESTINATION lib/cmake/wtlog
-)
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
-    DESTINATION include
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/wtlog
 )
 
 option(WTLOG_TEST_FLAG "ctest flag" OFF)
@@ -52,7 +52,7 @@ endif()
 
 option(WTLOG_EXAMPLE_FLAG "install example demo" ON)
 if(WTLOG_EXAMPLE_FLAG)
-    install(DIRECTORY example 
-        DESTINATION example
+    install(DIRECTORY example/
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/wtlog/example
     )
 endif()

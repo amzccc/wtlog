@@ -1,0 +1,49 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Configuration",
+            "description": "Default Configuration for building the project",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install",
+                "WTLOG_TEST_FLAG": true,
+                "WTLOG_EXAMPLE_FLAG": true
+            }
+        },
+        {
+            "name": "mingw",
+            "inherits": "default",
+            "generator":  "MinGW Makefiles",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mingw-Debug",
+            "inherits": "mingw",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default-build",
+            "configurePreset": "default",
+            "configuration": "Release"
+        },
+        {
+            "name": "mingw-build",
+            "inherits": "default-build",
+            "configurePreset": "mingw"
+        },
+        {
+            "name": "mingw-build-Debug",
+            "inherits": "default-build",
+            "configurePreset": "mingw-Debug",
+            "configuration": "Debug"
+        }
+    ]
+}
