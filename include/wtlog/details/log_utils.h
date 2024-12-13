@@ -1,17 +1,17 @@
 /*********************************************************************************
- * @file		log_clock.h
+ * @file		log_utils.h
  * @brief		
  * @author		cwt
  * @version		v0.0.0
  * @date		2024-11-22 15:55
  **********************************************************************************/
-#ifndef LOG_CLOCK_H__
-#define LOG_CLOCK_H__
+#ifndef LOG_UTILS_H__
+#define LOG_UTILS_H__
 
-#include "log_typedef.h"
+#include <wtlog/details/log_typedef.h>
 #include <chrono>
-#include <vector>
 #include <string>
+#include <array>
 
 namespace wtlog {
 namespace utils {
@@ -45,13 +45,6 @@ public:
     void setPrecision(Unit precision);
 
 private:
-    /**
-     * @brief 返回本地时间的tm结构
-     * @param timer time_t类型值
-     * @param local tm结构的本地时间
-     */
-    void localTime(time_t timer, tm& local);
-
     /**
      * @brief 设置日期
      * @param year 年
@@ -96,17 +89,33 @@ private:
     void initializeClockNumber();
 
 private:
-    inline static std::vector<std::string> s_numbers{};
     i32_t m_second_offset{};
     i32_t m_minute_offset{};
     i32_t m_hour_offset{};
     i64_t m_startpoint{};
-    std::string m_timestamp{ "0000-00-00 00:00:00.000" };
+    char m_timestamp[24]{ "0000-00-00 00:00:00.000" };
     Unit m_precision{ Unit::millisecond };
+
+    static std::array<std::string, 1000> s_numbers;
+    static std::atomic<bool> is_initialized;
 };
+
+/**
+ * @brief 返回本地时间的tm结构
+ * @param timer time_t类型值
+ * @param local tm结构的本地时间
+ */
+void localtime(time_t timer, tm& local);
+
+/**
+ * @brief 将utc时间戳转换成比较可读的数字
+ * @param utc utc时间戳
+ * @return 一个表示时间的可读数字
+ */
+ui64_t plaintime(std::time_t utc);
 
 } // !namespace utils
 } // !namespace wtlog
 
 
-#endif // !LOG_CLOCK_H__
+#endif // !LOG_UTILS_H__

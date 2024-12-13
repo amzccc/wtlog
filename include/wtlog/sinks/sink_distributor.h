@@ -8,8 +8,8 @@
 #ifndef SINK_DISTRIBUTOR_H__
 #define SINK_DISTRIBUTOR_H__
 
-#include "wtlog/details/log_typedef.h"
-#include "sinker.h"
+#include <wtlog/details/log_typedef.h>
+#include <wtlog/sinks/sinker.h>
 #include <unordered_map>
 #include <vector>
 

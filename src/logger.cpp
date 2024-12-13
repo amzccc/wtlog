@@ -1,6 +1,7 @@
-#include "wtlog/logger.h"
-#include "wtlog/sinks/sink_distributor.h"
+#include <wtlog/logger.h>
+#include <wtlog/sinks/sink_distributor.h>
 #include <map>
+#include <algorithm>
 
 using namespace wtlog;
 using wtlog::LogGenerator;
@@ -16,7 +17,7 @@ std::map<LogLevel, std::string> Logger::m_logflags{
 
 wtlog::Logger::~Logger() {
     if(!m_carrier->empty()) {
-        m_splitter->distribute(m_carrier, m_sinknos);
+        m_distributor->distribute(m_carrier, m_sinknos);
     }
 }
 
@@ -25,19 +26,24 @@ LogGenerator& wtlog::LogGenerator::instance() {
     return factory;
 }
 
+bool wtlog::LogGenerator::remove(const Pointer<Logger>& logger) {
+    auto iter = std::remove(m_loggers.begin(), m_loggers.end(), logger);
+    if(iter == m_loggers.end()) {
+        return false;
+    }
+    m_loggers.erase(iter, m_loggers.end());
+    return true;
+}
+
 void wtlog::Logger::attachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = m_splitter->registerSink(sinker);
+    auto sink_no = m_distributor->registerSink(sinker);
     m_sinknos.push_back(sink_no);
 }
 
 void wtlog::Logger::detachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = m_splitter->unregisterSink(sinker);
+    auto sink_no = m_distributor->unregisterSink(sinker);
     auto iter = std::remove(m_sinknos.begin(), m_sinknos.end(), sink_no);
     m_sinknos.erase(iter, m_sinknos.end());
-}
-
-void wtlog::Logger::setCarrier(Pointer<details::Carrier> carrier) {
-    m_carrier = carrier;
 }
 
 void wtlog::Logger::setTimePrecision(utils::Clock::Unit precision) {
@@ -68,7 +74,7 @@ void wtlog::Logger::log(std::string_view raw_msg) {
 
 void wtlog::Logger::send2Backend() {
     auto carrier = m_carrier->transfer();
-    m_splitter->distribute(carrier, m_sinknos);
+    m_distributor->distribute(carrier, m_sinknos);
 }
 
 std::string wtlog::Logger::enrich(std::string_view raw_msg) {
@@ -77,4 +83,8 @@ std::string wtlog::Logger::enrich(std::string_view raw_msg) {
     msg += raw_msg;
     msg += '\n';
     return msg;
+}
+
+bool wtlog::logRemove(Pointer<Logger> logger) {
+    return LogGenerator::instance().remove(logger);
 }

@@ -8,7 +8,7 @@
 #ifndef SINKER_H__
 #define SINKER_H__
 
-#include "wtlog/details/log_carrier.h"
+#include <wtlog/details/log_carrier.h>
 #include <string_view>
 
 namespace wtlog {

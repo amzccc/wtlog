@@ -1,4 +1,4 @@
-#include "wtlog/sinks/console_sinker.h"
+#include <wtlog/sinks/console_sinker.h>
 #include <iostream>
 
 

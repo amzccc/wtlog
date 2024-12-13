@@ -1,19 +1,16 @@
 /*********************************************************************************
- * @file		wtlog.h
+ * @file		includes.h
  * @brief		
  * @author		cwt
  * @version		v0.0.0
- * @date		2024-11-13 16:38
+ * @date		2024-12-11 19:50
  **********************************************************************************/
-#ifndef WTLOG_H__
-#define WTLOG_H__
+#ifndef INCLUDES_H__
+#define INCLUDES_H__
 
-#include <wtlog/logger.h>
-#include <wtlog/async_logger.h>
-
-namespace wtlog {
+#define CATCH_CONFIG_RUNNER
+#include <catch2/catch_all.hpp>
 
 
-} // !namespace wtlog
 
-#endif // !WTLOG_H__
+#endif // !INCLUDES_H__

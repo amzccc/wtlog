@@ -8,7 +8,7 @@
 #ifndef LOG_CARRIER_H__
 #define LOG_CARRIER_H__
 
-#include "log_typedef.h"
+#include <wtlog/details/log_typedef.h>
 #include <string>
 #include <string_view>
 #include <vector>

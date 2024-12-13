@@ -8,14 +8,13 @@
 #ifndef CONSOLE_SINKER_H__
 #define CONSOLE_SINKER_H__
 
-#include "sinker.h"
+#include <wtlog/sinks/sinker.h>
 #include <array>
 
 namespace wtlog {
 namespace sinks {
 
-class ConsoleSinker : public Sinker,
-                      public std::enable_shared_from_this<ConsoleSinker> {
+class ConsoleSinker : public Sinker {
 public:
     enum class Color : int {
         black = 30,

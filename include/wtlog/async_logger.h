@@ -1,19 +1,21 @@
 /*********************************************************************************
- * @file		wtlog.h
+ * @file		async_logger.h
  * @brief		
  * @author		cwt
  * @version		v0.0.0
- * @date		2024-11-13 16:38
+ * @date		2024-12-12 13:15
  **********************************************************************************/
-#ifndef WTLOG_H__
-#define WTLOG_H__
+#ifndef ASYNC_LOGGER_H__
+#define ASYNC_LOGGER_H__
 
 #include <wtlog/logger.h>
-#include <wtlog/async_logger.h>
 
 namespace wtlog {
 
+class AsyncLogger : public Logger {
+
+};
 
 } // !namespace wtlog
 
-#endif // !WTLOG_H__
+#endif // !ASYNC_LOGGER_H__
