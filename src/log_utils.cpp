@@ -23,40 +23,60 @@ wtlog::utils::Clock::Clock(Unit precision)
 }
 
 void wtlog::utils::Clock::setDate(i32_t year, i32_t month, i32_t day) {
-    char* dest = m_timestamp;
+    int pos = 0;
     std::string str = std::to_string(year + 1900);
-    std::strcpy(dest, str.c_str());
-    dest += 5;
-    std::strcpy(dest, s_numbers[month + 1].c_str());
-    dest += 3;
-    std::strcpy(dest, s_numbers[day].c_str());
+    for(int i = 0; i < 4; i++) {
+        m_timestamp[pos++] = str[i];
+    }
+    ++pos;
+    const auto& mon = s_numbers[month + 1];
+    for(int i = 1; i < 3; i++) {
+        m_timestamp[pos++] = mon[i];
+    }
+    ++pos;
+    const auto& d = s_numbers[day];
+    for(int i = 1; i < 3; i++) {
+        m_timestamp[pos++] = d[i];
+    }
 }
 
 void wtlog::utils::Clock::setHour(i32_t hour) {
     if(m_precision >= Unit::hour) {
-        char* dest = m_timestamp + 11;
-        std::strcpy(dest, s_numbers[hour].c_str());
+        int pos = 11;
+        const auto& number = s_numbers[hour];
+        for(int i = 1; i < 3; i++) {
+            m_timestamp[pos++] = number[i];
+        }
     }
 }
 
 void wtlog::utils::Clock::setMinute(i32_t minute) {
     if(m_precision >= Unit::minute) {
-        char* dest = m_timestamp + 14;
-        std::strcpy(dest, s_numbers[minute].c_str());
+        int pos = 14;
+        const auto& number = s_numbers[minute];
+        for(int i = 1; i < 3; i++) {
+            m_timestamp[pos++] = number[i] ;
+        }
     }
 }
 
 void wtlog::utils::Clock::setSecond(i32_t second) {
     if(m_precision >= Unit::second) {
-        char* dest = m_timestamp + 17;
-        std::strcpy(dest, s_numbers[second].c_str());
+        int pos = 17;
+        const auto& number = s_numbers[second];
+        for(int i = 1; i < 3; i++) {
+            m_timestamp[pos++] = number[i];
+        }
     }
 }
 
 void wtlog::utils::Clock::setMillisecond(i32_t millisecond) {
     if(m_precision == Unit::millisecond) {
-        char* dest = m_timestamp + 20;
-        std::strcpy(dest, s_numbers[millisecond].c_str());
+        int pos = 20;
+        const auto& number = s_numbers[millisecond];
+        for(int i = 0; i < 3; i++) {
+            m_timestamp[pos++] = number[i];
+        }
     }
 }
 
