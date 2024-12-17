@@ -1,43 +1,35 @@
 #include <wtlog/sinks/sink_distributor.h>
-#include <atomic>
+#include <algorithm>
+
 
 using namespace wtlog;
 
-namespace {
-
-static ui64_t seq() {
-    static std::atomic<ui64_t> seq{};
-    return ++seq;
+void wtlog::sinks::SinkDistributor::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {
+    m_sinks.emplace_back(sinker);
+    m_mask.emplace(sinker->identifier(), true);
 }
 
-} // !namespace
-
-Pointer<sinks::SinkDistributor> wtlog::sinks::SinkDistributor::instance() {
-    static Pointer<SinkDistributor> m_instance(new SinkDistributor);
-    return m_instance;
+void wtlog::sinks::SinkDistributor::unregisterSink(wtlog::Pointer<sinks::Sinker> sinker) {
+    m_sinks.erase(std::remove(m_sinks.begin(), m_sinks.end(), sinker));
+    m_mask.erase(sinker->identifier());
 }
 
-ui64_t wtlog::sinks::SinkDistributor::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {
-    auto key = seq();
-    m_sinks.insert(std::make_pair(key, sinker));
-    return key;
+void wtlog::sinks::SinkDistributor::distribute(Pointer<details::Carrier> carrier) {
+    return doDistribute(carrier);
 }
 
-ui64_t wtlog::sinks::SinkDistributor::unregisterSink(wtlog::Pointer<sinks::Sinker> sinker) {
-    for(auto [seq, sk] : m_sinks) {
-        if(sk == sinker) {
-            m_sinks.erase(seq);
-            return seq;
-        }
+void wtlog::sinks::SinkDistributor::mask(Pointer<Sinker> sinker, bool mask) {
+    auto iter = m_mask.find(sinker->identifier());
+    if(iter == m_mask.end()) {
+        return;
     }
-    return 0;
+    iter->second = mask;
 }
 
-void wtlog::sinks::SinkDistributor::distribute(Pointer<details::Carrier> carrier, const std::vector<ui64_t>& sinks_no) {
-    for(auto num : sinks_no) {
-        auto iter = m_sinks.find(num);
-        if(iter != m_sinks.end()) {
-            iter->second->collect(carrier);
+void wtlog::sinks::SinkDistributor::doDistribute(const Pointer<details::Carrier>& carrier) {
+    for(auto& sinker : m_sinks) {
+        if(m_mask.at(sinker->identifier())) {
+            sinker->collect(carrier);
         }
     }
 }

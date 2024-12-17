@@ -6,14 +6,11 @@
 
 namespace fs = std::filesystem;
 
-wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename, const fs::path& path) {
-    if(!fs::exists(path)) {
-        fs::create_directories(path);
+wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename, const fs::path& directory)
+    : m_filepath((directory / filename).replace_extension(extension())) {
+    if(!fs::exists(directory)) {
+        fs::create_directories(directory);
     }
-    auto absolute = path;
-    absolute /= filename;
-    absolute += extension();
-    m_out.open(absolute, std::ios::app);
 }
 
 wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename)
@@ -25,28 +22,83 @@ wtlog::sinks::SimpleFileSinker::~SimpleFileSinker() {
     }
 }
 
-void wtlog::sinks::SimpleFileSinker::flush() {
-    if(!m_out.is_open()) {
+void wtlog::sinks::SimpleFileSinker::flush(std::string_view message) {
+    if(message.empty()) {
         return;
     }
-    m_out.write(m_carrier->content().data(), m_carrier->content().size());
+    if(!fs::exists(m_filepath.parent_path())) {
+        fs::create_directories(m_filepath.parent_path());
+    }
+    m_out.open(m_filepath, std::ios::app);
+    m_out.write(message.data(), message.size());
+    m_out.close();
 }
 
-std::string wtlog::sinks::SimpleFileSinker::extension() {
-    return "-" + std::to_string(wtlog::utils::plaintime(std::time(nullptr))) + ".log";
+constexpr std::string wtlog::sinks::SimpleFileSinker::extension() {
+    return ".log";
 }
 
-wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t filesize, const fs::path& path)
-    : SimpleFileSinker(filename, path),
-    m_filesize(filesize) { }
+/*===================================================================================================================*/
 
-wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t filesize)
-    : RotateFileSinker(filename, filesize, fs::current_path() / "log") { }
+wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t kb, const fs::path& directory)
+    : m_filesize(kb * 1024),
+    m_filepath((directory / filename).append(std::to_string(wtlog::utils::plaintime(std::time(nullptr)))).replace_extension(extension())) {
+    if(!fs::exists(directory)) {
+        fs::create_directories(directory);
+    }
+}
 
-wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point, const fs::path& path)
-    : SimpleFileSinker(filename, path),
-    m_dir(path),
-    m_filename(filename) {
+wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t kb)
+    : RotateFileSinker(filename, kb, fs::current_path() / "log") { }
+
+wtlog::sinks::RotateFileSinker::~RotateFileSinker() {
+    if(m_out.is_open()) {
+        m_out.close();
+    }
+}
+
+void wtlog::sinks::RotateFileSinker::flush(std::string_view message) {
+    if(message.empty()) {
+        return;
+    }
+    auto m_cursize = fs::file_size(m_filepath);
+    if(!fs::exists(m_filepath.parent_path())) {
+        fs::create_directories(m_filepath.parent_path());
+    }
+    m_out.open(m_filepath, std::ios::app);
+    ui64_t len = message.size();
+    if(len + m_cursize > m_filesize) {
+        len = m_filesize - m_cursize;
+        len = message.substr(0, len).find_last_of('\n') + 1;
+    }
+    m_out.write(message.data(), len);
+    m_out.close();
+    if(len < message.size() || m_cursize + len == m_filesize) {
+        rotateFile();
+        return flush(message.substr(len, message.size() - len));
+    }
+}
+
+constexpr std::string wtlog::sinks::RotateFileSinker::extension() {
+    return ".log";
+}
+
+void wtlog::sinks::RotateFileSinker::rotateFile() {
+    if(fs::exists(m_filepath)) {
+        auto newname = m_filepath;
+        newname.replace_filename(m_filepath.stem()).append("_" + std::to_string(++m_seq)).replace_extension(extension());
+        fs::rename(m_filepath, newname);
+    }
+}
+
+/*=================================================================================================================*/
+
+wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point, const fs::path& directory)
+    : m_filepath((directory / filename).append(extension())),
+    m_prefix(filename) {
+    if(!fs::exists(directory)) {
+        fs::create_directories(directory);
+    }
     std::time_t time = std::time(nullptr);
     std::tm local;
     utils::localtime(time, local);
@@ -63,23 +115,32 @@ wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int 
 wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point)
     : DailyFileSinker(filename, hour_point, fs::current_path() / "log") { }
 
-void wtlog::sinks::DailyFileSinker::flush() {
-    m_out.write(m_carrier->content().data(), m_carrier->content().size());
+wtlog::sinks::DailyFileSinker::~DailyFileSinker() {
+    if(m_out.is_open()) {
+        m_out.close();
+    }
+}
+
+void wtlog::sinks::DailyFileSinker::flush(std::string_view message) {
+    if(!fs::exists(m_filepath.parent_path())) {
+        fs::create_directories(m_filepath.parent_path());
+    }
+    m_out.open(m_filepath, std::ios::app);
+    m_out.write(message.data(), message.size());
+    m_out.close();
     auto current = std::time(nullptr);
     if(current >= m_updatetime) {
-        swapFile();
+        swapfile();
         while(current >= m_updatetime) {
             m_updatetime += oneday;
         }
     }
 }
 
-void wtlog::sinks::DailyFileSinker::swapFile() {
-    m_out.close();
-    if(!fs::exists(m_dir)) {
-        fs::create_directories(m_dir);
-    }
-    fs::path full_name = m_dir / m_filename;
-    full_name += extension();
-    m_out.open(full_name, std::ios::out);
+void wtlog::sinks::DailyFileSinker::swapfile() {
+    m_filepath.replace_filename(m_prefix + extension());
+}
+
+std::string wtlog::sinks::DailyFileSinker::extension() {
+    return std::to_string(wtlog::utils::plaintime(std::time(nullptr))) + ".log";
 }

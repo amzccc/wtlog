@@ -102,10 +102,9 @@ protected:
 
 protected:
     LogLevel m_level{ LogLevel::error };
-    std::vector<ui64_t> m_sinknos{};
     wtlog::utils::Clock m_clock{};
     Pointer<details::Carrier> m_carrier{ std::make_shared<details::SimpleCarrier>() };
-    Pointer<sinks::SinkDistributor> m_distributor{ sinks::SinkDistributor::instance() };
+    Pointer<sinks::SinkDistributor> m_distributor{ std::make_shared<sinks::SinkDistributor>() };
     static std::map<LogLevel, std::string> m_logflags;
 };
 

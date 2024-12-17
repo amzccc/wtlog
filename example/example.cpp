@@ -46,22 +46,22 @@ void consoleSinkerDemo() {
 
 void simpleFileSinkerDemo() {
     auto logger = wtlog::logCreate();
-    auto sinker = logger->createSinker<wtlog::sinks::SimpleFileSinker>("name.txt");
+    auto sinker = logger->createSinker<wtlog::sinks::SimpleFileSinker>("simplelog", std::filesystem::current_path());
     logger->detachSinker(sinker);
     wtlog::logRemove(logger);
 }
 
 void rotateFileSinkerDemo() {
     auto logger = wtlog::logCreate();
-    // auto sinker = logger->createSinker<wtlog::sinks::RotateFileSinker>();
-    // logger->detachSinker(sinker);
+    auto sinker = logger->createSinker<wtlog::sinks::RotateFileSinker>("rotatelog", 4096, std::filesystem::current_path());
+    logger->detachSinker(sinker);
     wtlog::logRemove(logger);
 }
 
 void dailyFileSinkerDemo() {
     auto logger = wtlog::logCreate();
-    // auto sinker = logger->createSinker<wtlog::sinks::DailyFileSinker>();
-    // logger->detachSinker(sinker);
+    auto sinker = logger->createSinker<wtlog::sinks::DailyFileSinker>("dailylog", 3, std::filesystem::current_path());
+    logger->detachSinker(sinker);
     wtlog::logRemove(logger);
 }
 

@@ -2,10 +2,8 @@
 #include <iostream>
 
 
-void wtlog::sinks::ConsoleSinker::flush() {
-    std::cerr << property();
-    std::cerr << m_carrier->content();
-    std::cerr << "\033[0m";
+void wtlog::sinks::ConsoleSinker::flush(std::string_view message) {
+    std::cerr << property() << message << "\033[0m";
 }
 
 void wtlog::sinks::ConsoleSinker::setFrontColor(Color color) {

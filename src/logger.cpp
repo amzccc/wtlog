@@ -17,7 +17,7 @@ std::map<LogLevel, std::string> Logger::m_logflags{
 
 wtlog::Logger::~Logger() {
     if(!m_carrier->empty()) {
-        m_distributor->distribute(m_carrier, m_sinknos);
+        m_distributor->distribute(m_carrier);
     }
 }
 
@@ -36,14 +36,11 @@ bool wtlog::LogGenerator::remove(const Pointer<Logger>& logger) {
 }
 
 void wtlog::Logger::attachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = m_distributor->registerSink(sinker);
-    m_sinknos.push_back(sink_no);
+    m_distributor->registerSink(sinker);
 }
 
 void wtlog::Logger::detachSinker(Pointer<sinks::Sinker> sinker) {
-    auto sink_no = m_distributor->unregisterSink(sinker);
-    auto iter = std::remove(m_sinknos.begin(), m_sinknos.end(), sink_no);
-    m_sinknos.erase(iter, m_sinknos.end());
+    m_distributor->unregisterSink(sinker);
 }
 
 void wtlog::Logger::setTimePrecision(utils::Clock::Unit precision) {
@@ -74,7 +71,7 @@ void wtlog::Logger::log(std::string_view raw_msg) {
 
 void wtlog::Logger::send2Backend() {
     auto carrier = m_carrier->transfer();
-    m_distributor->distribute(carrier, m_sinknos);
+    m_distributor->distribute(carrier);
 }
 
 std::string wtlog::Logger::enrich(std::string_view raw_msg) {

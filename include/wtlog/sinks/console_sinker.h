@@ -38,8 +38,9 @@ public:
 public:
     /**
      * @brief 将日志通过标准错误流输出到终端上显示
+     * @param message 日志信息
      */
-    void flush() override;
+    void flush(std::string_view message) override;
 
     /**
      * @brief 设置终端上日志显示的文字颜色

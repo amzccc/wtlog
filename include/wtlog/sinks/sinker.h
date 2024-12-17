@@ -14,7 +14,31 @@
 namespace wtlog {
 namespace sinks {
 
-class Sinker {
+class SinkIdentifier {
+protected:
+    SinkIdentifier();
+
+    SinkIdentifier(const SinkIdentifier&) = delete;
+
+    SinkIdentifier(SinkIdentifier&& other);
+
+public:
+    ~SinkIdentifier() = default;
+
+public:
+    ui64_t identifier() const;
+
+    SinkIdentifier& operator=(const SinkIdentifier&) = delete;
+
+    SinkIdentifier& operator=(SinkIdentifier&&) = delete;
+
+    bool operator==(const SinkIdentifier& other);
+
+private:
+    const ui64_t m_id;
+};
+
+class Sinker : public SinkIdentifier {
 public:
     virtual ~Sinker() = default;
     
@@ -23,17 +47,14 @@ public:
      * @param carrier 日志信息的传输对象
      */
     virtual void collect(Pointer<details::Carrier> carrier) {
-        m_carrier = carrier;
-        flush();
+        flush(carrier->content());
     };
 
     /**
      * @brief 将日志输出到磁盘
+     * @param message 日志信息
      */
-    virtual void flush() = 0;
-
-protected:
-    Pointer<details::Carrier> m_carrier{ nullptr };
+    virtual void flush(std::string_view message) = 0;
 };
 
 } // !namespace sinks
