@@ -36,7 +36,7 @@ install(TARGETS wtlog_interface wtlog
 )
 
 install(DIRECTORY include/
-DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 install(EXPORT wtlogConfig
