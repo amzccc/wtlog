@@ -8,7 +8,6 @@
 #ifndef LOG_TYPEDEF_H__
 #define LOG_TYPEDEF_H__
 
-
 #include <memory>
 
 namespace wtlog {
@@ -21,21 +20,13 @@ using ui32_t = unsigned int;
 using i64_t = std::ptrdiff_t;
 using ui64_t = std::size_t;
 
-template<typename T>
+template <typename T>
 using Pointer = std::shared_ptr<T>;
 
-template<typename T>
+template <typename T>
 using Unique = std::unique_ptr<T>;
 
-enum class LogLevel : char {
-    trace,
-    debug,
-    info,
-    warn,
-    error,
-    fatal,
-    hide
-};
+enum class LogLevel : char { trace, debug, info, warn, error, fatal, hide };
 
 enum class ResultCode : int {
     succeed = 0,
@@ -44,8 +35,6 @@ enum class ResultCode : int {
     full,
 };
 
-
-
-} // !namespace wtlog
+} // namespace wtlog
 
 #endif // !LOG_TYPEDEF_H__

@@ -8,12 +8,9 @@
 #ifndef WTLOG_H__
 #define WTLOG_H__
 
-#include <wtlog/logger.h>
 #include <wtlog/async_logger.h>
+#include <wtlog/logger.h>
 
-namespace wtlog {
-
-
-} // !namespace wtlog
+namespace wtlog {} // namespace wtlog
 
 #endif // !WTLOG_H__

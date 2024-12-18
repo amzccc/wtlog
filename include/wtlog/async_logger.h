@@ -12,10 +12,8 @@
 
 namespace wtlog {
 
-class AsyncLogger : public Logger {
+class AsyncLogger : public Logger {};
 
-};
-
-} // !namespace wtlog
+} // namespace wtlog
 
 #endif // !ASYNC_LOGGER_H__

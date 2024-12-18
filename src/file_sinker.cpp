@@ -1,12 +1,13 @@
-#include <wtlog/sinks/file_sinker.h>
 #include <wtlog/details/log_utils.h>
+#include <wtlog/sinks/file_sinker.h>
+
 #include <filesystem>
 #include <iostream>
 
-
 namespace fs = std::filesystem;
 
-wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename, const fs::path& directory)
+wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename,
+                                                 const fs::path& directory)
     : m_filepath((directory / filename).replace_extension(extension())) {
     if(!fs::exists(directory)) {
         fs::create_directories(directory);
@@ -14,7 +15,7 @@ wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename, co
 }
 
 wtlog::sinks::SimpleFileSinker::SimpleFileSinker(const std::string& filename)
-    : SimpleFileSinker(filename, fs::current_path() / "log") { }
+    : SimpleFileSinker(filename, fs::current_path() / "log") {}
 
 wtlog::sinks::SimpleFileSinker::~SimpleFileSinker() {
     if(m_out.is_open()) {
@@ -40,16 +41,19 @@ constexpr std::string wtlog::sinks::SimpleFileSinker::extension() {
 
 /*===================================================================================================================*/
 
-wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t kb, const fs::path& directory)
+wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t kb,
+                                                 const fs::path& directory)
     : m_filesize(kb * 1024),
-    m_filepath((directory / filename).append(std::to_string(wtlog::utils::plaintime(std::time(nullptr)))).replace_extension(extension())) {
+      m_filepath((directory / filename)
+                     .append(std::to_string(wtlog::utils::plaintime(std::time(nullptr))))
+                     .replace_extension(extension())) {
     if(!fs::exists(directory)) {
         fs::create_directories(directory);
     }
 }
 
 wtlog::sinks::RotateFileSinker::RotateFileSinker(const std::string& filename, ui64_t kb)
-    : RotateFileSinker(filename, kb, fs::current_path() / "log") { }
+    : RotateFileSinker(filename, kb, fs::current_path() / "log") {}
 
 wtlog::sinks::RotateFileSinker::~RotateFileSinker() {
     if(m_out.is_open()) {
@@ -86,16 +90,19 @@ constexpr std::string wtlog::sinks::RotateFileSinker::extension() {
 void wtlog::sinks::RotateFileSinker::rotateFile() {
     if(fs::exists(m_filepath)) {
         auto newname = m_filepath;
-        newname.replace_filename(m_filepath.stem()).append("_" + std::to_string(++m_seq)).replace_extension(extension());
+        newname.replace_filename(m_filepath.stem())
+            .append("_" + std::to_string(++m_seq))
+            .replace_extension(extension());
         fs::rename(m_filepath, newname);
     }
 }
 
 /*=================================================================================================================*/
 
-wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point, const fs::path& directory)
+wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point,
+                                               const fs::path& directory)
     : m_filepath((directory / filename).append(extension())),
-    m_prefix(filename) {
+      m_prefix(filename) {
     if(!fs::exists(directory)) {
         fs::create_directories(directory);
     }
@@ -113,7 +120,7 @@ wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int 
 }
 
 wtlog::sinks::DailyFileSinker::DailyFileSinker(const std::string& filename, int hour_point)
-    : DailyFileSinker(filename, hour_point, fs::current_path() / "log") { }
+    : DailyFileSinker(filename, hour_point, fs::current_path() / "log") {}
 
 wtlog::sinks::DailyFileSinker::~DailyFileSinker() {
     if(m_out.is_open()) {

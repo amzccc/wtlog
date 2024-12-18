@@ -1,11 +1,10 @@
 #include <wtlog/details/log_carrier.h>
 #include <cstring>
 
+wtlog::details::SimpleCarrier::SimpleCarrier(const std::string& msg) : m_content(msg) {}
 
-wtlog::details::SimpleCarrier::SimpleCarrier(const std::string& msg) : m_content(msg) {
-}
-
-wtlog::details::SimpleCarrier& wtlog::details::SimpleCarrier::operator=(const SimpleCarrier& other) {
+wtlog::details::SimpleCarrier& wtlog::details::SimpleCarrier::operator=(
+    const SimpleCarrier& other) {
     m_content = other.m_content;
     return *this;
 }
@@ -37,20 +36,20 @@ wtlog::Pointer<wtlog::details::Carrier> wtlog::details::SimpleCarrier::transfer(
 bool wtlog::details::SimpleCarrier::empty() {
     return m_content.empty();
 }
-wtlog::details::BuffCarrier::BuffCarrier(ui64_t size)
-    : m_buff{ new char[size] { } }, m_size(size) { }
+
+wtlog::details::BuffCarrier::BuffCarrier(ui64_t size) : m_buff{new char[size]{}}, m_size(size) {}
 
 wtlog::details::BuffCarrier::BuffCarrier(const BuffCarrier& other)
     : m_buff(new char[other.m_size]),
-    m_size(other.m_size),
-    m_tail(other.m_tail) {
+      m_size(other.m_size),
+      m_tail(other.m_tail) {
     std::memcpy(m_buff, other.m_buff, other.m_size);
 }
 
 wtlog::details::BuffCarrier::BuffCarrier(BuffCarrier&& other)
     : m_buff(other.m_buff),
-    m_size(other.m_size),
-    m_tail(other.m_tail) {
+      m_size(other.m_size),
+      m_tail(other.m_tail) {
     other.m_buff = nullptr;
 }
 
@@ -61,7 +60,7 @@ wtlog::details::BuffCarrier::~BuffCarrier() {
 wtlog::details::BuffCarrier& wtlog::details::BuffCarrier::operator=(const BuffCarrier& other) {
     if(m_size < other.m_size) {
         delete[] m_buff;
-        m_buff = new char[other.m_size] { };
+        m_buff = new char[other.m_size]{};
         m_size = other.m_size;
     }
     std::memcpy(m_buff, other.m_buff, other.m_size);
@@ -103,11 +102,11 @@ bool wtlog::details::BuffCarrier::empty() {
 
 void wtlog::details::BuffCarrier::resizeBuffer(ui64_t size) {
     char* tmp = m_buff;
-    m_buff = new char[size] { };
+    m_buff = new char[size]{};
     if(size >= m_tail) {
-        std:memcpy(m_buff, tmp, m_tail);
-    }
-    else {
+    std:
+        memcpy(m_buff, tmp, m_tail);
+    } else {
         std::memcpy(m_buff, tmp, size - 1);
     }
     delete[] tmp;

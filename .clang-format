@@ -7,9 +7,8 @@ BasedOnStyle: Google
 AccessModifierOffset: -4  # 访问标识符偏移
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: None
-AlignOperands: Align
 AllowAllArgumentsOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: true
+PackConstructorInitializers : CurrentLine
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
@@ -17,8 +16,8 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: Never  # To avoid conflict, set this "Never" and each "if statement" should include brace when coding
 AllowShortLambdasOnASingleLine: Inline
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterReturnType: None
-AlwaysBreakTemplateDeclarations: Yes
+BreakAfterReturnType: Automatic
+BreakTemplateDeclarations: Yes
 BinPackArguments: true
 
 # 花括号格式自定义
@@ -40,10 +39,11 @@ BraceWrapping:
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
-BreakBeforBinaryOperators: None
-BreakBeforeTernaryOperators: true
+AlignOperands: Align
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeColon
-BreakInheritanceList: BeforeColon
+BreakInheritanceList: AfterComma
 ColumnLimit: 100
 CompactNamespaces: false
 ContinuationIndentWidth: 4
@@ -52,10 +52,13 @@ DerivePointerAlignment: false  # Make sure the * or & align on the left
 EmptyLineBeforeAccessModifier: LogicalBlock
 FixNamespaceComments: true
 IncludeBlocks: Preserve
-IndentCaseLabels: true
-IndentPPDirectives: None
+IndentCaseLabels: false
+IndentPPDirectives: BeforeHash
 IndentWidth: 4
-KeepEmptyLinesAtTheStartOfBlocks: true
+KeepEmptyLines : 
+  AtEndOfFile: true
+  AtStartOfBlock: true
+  AtStartOfFile: false
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
 PointerAlignment: Left
@@ -68,16 +71,24 @@ SpaceBeforeAssignmentOperators: true
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
-SpaceBeforeParens: Never
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: false
+  AfterForeachMacros: false
+  AfterFunctionDeclarationName: false
+  AfterFunctionDefinitionName: false
+  AfterIfMacros: false
+  AfterOverloadedOperator: false
+  AfterPlacementOperator: false
+  AfterRequiresInClause: false
+  AfterRequiresInExpression: false
+  BeforeNonEmptyParentheses: false
 SpaceBeforeRangeBasedForLoopColon: true
 SpaceBeforeSquareBrackets: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
-SpacesInAngles: false
-SpacesInCStyleCastParentheses: false
-SpacesInContainerLiterals: false
-SpacesInParentheses: false
-SpacesInSquareBrackets: false
-Standard: c++11
+SpacesInAngles: Never
+SpacesInParens: Never
+Standard: c++20
 TabWidth: 4
 UseTab: Never

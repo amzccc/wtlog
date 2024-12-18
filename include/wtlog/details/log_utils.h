@@ -9,9 +9,9 @@
 #define LOG_UTILS_H__
 
 #include <wtlog/details/log_typedef.h>
+#include <array>
 #include <chrono>
 #include <string>
-#include <array>
 
 namespace wtlog {
 namespace utils {
@@ -25,7 +25,7 @@ public:
         second = 4,
         millisecond = 5,
     };
-    
+
 public:
     Clock(Unit precision = Unit::millisecond);
 
@@ -93,8 +93,8 @@ private:
     i32_t m_minute_offset{};
     i32_t m_hour_offset{};
     i64_t m_startpoint{};
-    char m_timestamp[24]{ "0000-00-00 00:00:00.000" };
-    Unit m_precision{ Unit::millisecond };
+    char m_timestamp[24]{"0000-00-00 00:00:00.000"};
+    Unit m_precision{Unit::millisecond};
 
     static std::array<std::string, 1000> s_numbers;
     static std::atomic<bool> is_initialized;
@@ -114,8 +114,7 @@ void localtime(time_t timer, tm& local);
  */
 ui64_t plaintime(std::time_t utc);
 
-} // !namespace utils
-} // !namespace wtlog
-
+} // namespace utils
+} // namespace wtlog
 
 #endif // !LOG_UTILS_H__

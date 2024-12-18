@@ -20,10 +20,7 @@ namespace details {
  */
 class Carrier {
 public:
-    enum class Status : char {
-        valid,
-        ready
-    };
+    enum class Status : char { valid, ready };
 
 public:
     virtual ~Carrier() = default;
@@ -77,7 +74,7 @@ public:
     ~SimpleCarrier() = default;
 
 public:
-    SimpleCarrier& operator=(const SimpleCarrier & other);
+    SimpleCarrier& operator=(const SimpleCarrier& other);
 
     SimpleCarrier& operator=(SimpleCarrier&& other);
 
@@ -128,7 +125,7 @@ public:
     BuffCarrier(BuffCarrier&& other);
 
     ~BuffCarrier();
-    
+
 public:
     BuffCarrier& operator=(const BuffCarrier& other);
 
@@ -181,11 +178,10 @@ public:
 private:
     char* m_buff;
     ui64_t m_size;
-    ui64_t m_tail{ 0 };
+    ui64_t m_tail{0};
 };
 
-
-}   // !namespace details
-}   // !namespace wtlog
+} // namespace details
+} // namespace wtlog
 
 #endif // !LOG_CARRIER_H__

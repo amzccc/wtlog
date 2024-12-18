@@ -1,18 +1,14 @@
 #include <wtlog/logger.h>
 #include <wtlog/sinks/sink_distributor.h>
-#include <map>
 #include <algorithm>
+#include <map>
 
 using namespace wtlog;
 using wtlog::LogGenerator;
 
 std::map<LogLevel, std::string> Logger::m_logflags{
-    { LogLevel::fatal, " [F] " },
-    { LogLevel::error, " [E] " },
-    { LogLevel::warn,  " [W] " },
-    { LogLevel::info,  " [I] " },
-    { LogLevel::debug, " [D] " },
-    { LogLevel::trace, " [T] " },
+    {LogLevel::fatal, " [F] "}, {LogLevel::error, " [E] "}, {LogLevel::warn, " [W] "},
+    {LogLevel::info, " [I] "},  {LogLevel::debug, " [D] "}, {LogLevel::trace, " [T] "},
 };
 
 wtlog::Logger::~Logger() {

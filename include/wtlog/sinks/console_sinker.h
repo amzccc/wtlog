@@ -101,16 +101,15 @@ private:
      * @return 
      */
     std::string property();
-    
+
 private:
     std::string m_frontcolor{};
     std::string m_backcolor{};
-    std::array<bool, 3> m_fonts{ false, false, false };
+    std::array<bool, 3> m_fonts{false, false, false};
     static std::vector<std::string> colors;
 };
 
-} // !namespace sinks
-} // !namespace wtlog
-
+} // namespace sinks
+} // namespace wtlog
 
 #endif // !CONSOLE_SINKER_H__

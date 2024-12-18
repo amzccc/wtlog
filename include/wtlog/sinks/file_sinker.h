@@ -9,9 +9,9 @@
 #define FILE_SINKER_H__
 
 #include <wtlog/sinks/sinker.h>
+#include <filesystem>
 #include <fstream>
 #include <memory>
-#include <filesystem>
 
 namespace wtlog {
 namespace sinks {
@@ -111,7 +111,7 @@ private:
     std::ofstream m_out{};
 };
 
-} // !namespace sinker
-} // !namespace wtlog
+} // namespace sinks
+} // namespace wtlog
 
 #endif // !FILE_SINKER_H__

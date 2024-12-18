@@ -1,7 +1,6 @@
 #include <wtlog/sinks/sink_distributor.h>
 #include <algorithm>
 
-
 using namespace wtlog;
 
 void wtlog::sinks::SinkDistributor::registerSink(wtlog::Pointer<sinks::Sinker> sinker) {

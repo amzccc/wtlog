@@ -41,14 +41,12 @@ private:
 class Sinker : public SinkIdentifier {
 public:
     virtual ~Sinker() = default;
-    
+
     /**
      * @brief 收集日志信息
      * @param carrier 日志信息的传输对象
      */
-    virtual void collect(Pointer<details::Carrier> carrier) {
-        flush(carrier->content());
-    };
+    virtual void collect(Pointer<details::Carrier> carrier) { flush(carrier->content()); };
 
     /**
      * @brief 将日志输出到磁盘
@@ -57,8 +55,7 @@ public:
     virtual void flush(std::string_view message) = 0;
 };
 
-} // !namespace sinks
-} // !namespace wtlog
-
+} // namespace sinks
+} // namespace wtlog
 
 #endif // !SINKER_H__

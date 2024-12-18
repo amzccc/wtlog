@@ -1,7 +1,6 @@
 #include <wtlog/details/log_utils.h>
-#include <cstring>
 #include <atomic>
-
+#include <cstring>
 
 using namespace std::chrono;
 std::array<std::string, 1000> wtlog::utils::Clock::s_numbers{};
@@ -9,7 +8,7 @@ std::atomic<bool> wtlog::utils::Clock::is_initialized(false);
 
 wtlog::utils::Clock::Clock(Unit precision)
     : m_precision(precision),
-    m_startpoint(system_clock::to_time_t(system_clock::now())) {
+      m_startpoint(system_clock::to_time_t(system_clock::now())) {
     initializeClockNumber();
     std::tm local;
     localtime(m_startpoint, local);
@@ -55,7 +54,7 @@ void wtlog::utils::Clock::setMinute(i32_t minute) {
         int pos = 14;
         const auto& number = s_numbers[minute];
         for(int i = 1; i < 3; i++) {
-            m_timestamp[pos++] = number[i] ;
+            m_timestamp[pos++] = number[i];
         }
     }
 }
@@ -167,10 +166,6 @@ void wtlog::utils::localtime(time_t timer, tm& local) {
 wtlog::ui64_t wtlog::utils::plaintime(std::time_t utc) {
     std::tm local;
     localtime(utc, local);
-    return (local.tm_year + 1900) * 10000000000 +
-            (local.tm_mon + 1) * 100000000 +
-            local.tm_mday * 1000000 +
-            local.tm_hour * 10000 +
-            local.tm_min * 100 +
-            local.tm_sec;
+    return (local.tm_year + 1900) * 10000000000 + (local.tm_mon + 1) * 100000000 +
+           local.tm_mday * 1000000 + local.tm_hour * 10000 + local.tm_min * 100 + local.tm_sec;
 }

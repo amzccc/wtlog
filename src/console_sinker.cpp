@@ -1,7 +1,6 @@
 #include <wtlog/sinks/console_sinker.h>
 #include <iostream>
 
-
 void wtlog::sinks::ConsoleSinker::flush(std::string_view message) {
     std::cerr << property() << message << "\033[0m";
 }
@@ -27,7 +26,7 @@ void wtlog::sinks::ConsoleSinker::setUnderline(bool is_underline) {
 }
 
 void wtlog::sinks::ConsoleSinker::resetProperty() {
-    m_fonts = { false, false, false };
+    m_fonts = {false, false, false};
     m_frontcolor.clear();
     m_backcolor.clear();
 }

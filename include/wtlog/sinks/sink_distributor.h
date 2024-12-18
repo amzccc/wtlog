@@ -13,7 +13,6 @@
 #include <unordered_map>
 #include <vector>
 
-
 namespace wtlog {
 namespace sinks {
 
@@ -64,7 +63,7 @@ protected:
     std::unordered_map<ui64_t, bool> m_mask{};
 };
 
-} // !namespace sinks
-} // !namespace wtlog
+} // namespace sinks
+} // namespace wtlog
 
 #endif // !SINK_DISTRIBUTOR_H__
