@@ -36,3 +36,4 @@
 /out
 /build
 /install
+CMakeUserPresets.json
